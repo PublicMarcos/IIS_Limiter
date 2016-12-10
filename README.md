@@ -12,8 +12,8 @@
 (Optional)Hier muss man angeben in welchen Intervall das Tool die Bandbreite überprüfen soll. 1 Stunde (01:00:00) ist standard.
 
 ##Configeinträge (Beispiel)
-1. Zeile: Ethernet 3,1-100,Default Web Site,52428800,150000,00:02:00,W3SVC
-2. Zeile: Ethernet 3,101-1000,Default Web Site,943718400,150000,00:01:00,W3SVC
+Ethernet 3,1-100,Default Web Site,52428800,150000,00:02:00,W3SVC
+Ethernet 3,101-1000,Default Web Site,943718400,150000,00:01:00,W3SVC
 
 1. Adaptername = Ethernet 3
 2. Trigger von/bis in Mbit/s = 1-100
