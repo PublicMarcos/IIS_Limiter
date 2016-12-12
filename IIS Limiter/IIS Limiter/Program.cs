@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.ServiceProcess;
+using System.Linq;
 using System.Threading;
 
 namespace IIS_Limiter
@@ -36,6 +36,11 @@ namespace IIS_Limiter
             else
             {
                 MainConfig = new Config(ConfigPath, LogPath);
+                if (MainConfig.Items.Count == 0)
+                {
+                    Console.WriteLine("Falsche Konfiguration");
+                    Environment.Exit(87);
+                }
             }
 
             while (true)
@@ -47,7 +52,7 @@ namespace IIS_Limiter
                     {
                         if ((CurSpeed >= MainConfig.Items[i].SpeedTriggerFrom) && (CurSpeed <= MainConfig.Items[i].SpeedTriggerTo))
                         {
-                            if (LimitIISSpeed(MainConfig.Items[i].WebSiteName, MainConfig.Items[i].MaxBytesPerSec, MainConfig.Items[i].MaxConn, MainConfig.Items[i].Timeout, MainConfig.Items[i].IISServiceName))
+                            if (LimitIISSpeed(MainConfig.Items[i].WebSiteName, MainConfig.Items[i].MaxBytesPerSec, MainConfig.Items[i].MaxConn, MainConfig.Items[i].Timeout))
                             {
                                 ErrorReport(string.Format("Datum: {0:G}", DateTime.Now) + " - Änderungen wurden vorgenommen");
                             }
@@ -73,9 +78,6 @@ namespace IIS_Limiter
 
         private static int GetAdapterSpeed(string Adaptername)
         {
-            // The enum value of `AF_INET` will select only IPv4 adapters.
-            // You can change this to `AF_INET6` for IPv6 likewise
-            // And `AF_UNSPEC` for either one
             foreach (IPIntertop.IP_ADAPTER_ADDRESSES net in IPIntertop.GetIPAdapters(IPIntertop.FAMILY.AF_UNSPEC))
             {
                 if (net.FriendlyName.ToLowerInvariant().Contains(Adaptername.ToLowerInvariant()))
@@ -87,7 +89,7 @@ namespace IIS_Limiter
             return 0;
         }
 
-        private static bool LimitIISSpeed(string WebSiteName, int MaxBytesPerSec, int MaxConn, TimeSpan Timeout, string IISServiceName)
+        private static bool LimitIISSpeed(string WebSiteName, int MaxBytesPerSec, int MaxConn, TimeSpan Timeout)
         {
             try
             {
@@ -110,11 +112,8 @@ namespace IIS_Limiter
                     limitsElement["connectionTimeout"] = Timeout;
 
                     serverManager.CommitChanges();
-                    var service = new ServiceController(IISServiceName);
-                    service.Stop();
-                    service.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.Parse("00:01:00"));
-                    service.Start();
-                    service.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.Parse("00:01:00"));
+
+                    RestartWebsite(WebSiteName);
                     return true;
                 }
             }
@@ -153,6 +152,28 @@ namespace IIS_Limiter
             }
             return null;
         }
+
+        private static bool RestartWebsite(string Websitename)
+        {
+            using (var Webserver = new ServerManager())
+            {
+                var Website = Webserver.Sites.FirstOrDefault(s => s.Name == Websitename);
+                if (!ReferenceEquals(Website, null))
+                {
+                    Website.Stop();
+                    if (Website.State == ObjectState.Stopped)
+                    {
+                        Website.Start();
+                        if (Website.State == ObjectState.Started)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            ErrorReport("Webseite '" + Websitename + "' konnte nicht neu gestartet werden");
+            return false;
+        }
     }
 
     internal sealed class Config
@@ -162,21 +183,20 @@ namespace IIS_Limiter
             this.LogPath = LogPath;
             Items = new List<ConfigItem>();
             var RawData = File.ReadAllLines(ConfigPath);
-            string Adaptername, WebSiteName, IISServiceName;
+            string Adaptername, WebSiteName;
             int SpeedTriggerFrom = 0, SpeedTriggerTo = 0, MaxBytesPerSec = 0, MaxConn = 0;
             TimeSpan Timeout;
             for (int i = 0; i < RawData.Length; i++)
             {
                 var RAWItems = RawData[i].Split(',');
-                if ((RAWItems.Length > 6) && (RAWItems[1].Contains("-")))
+                if ((RAWItems.Length > 5) && (RAWItems[1].Contains("-")))
                 {
                     Adaptername = RAWItems[0];
                     WebSiteName = RAWItems[2];
-                    IISServiceName = RAWItems[6];
                     var RAWTriggerPoints = RAWItems[1].Split('-');
                     if (int.TryParse(RAWTriggerPoints[0], out SpeedTriggerFrom) && int.TryParse(RAWTriggerPoints[1], out SpeedTriggerTo) && int.TryParse(RAWItems[3], out MaxBytesPerSec) && int.TryParse(RAWItems[4], out MaxConn) && TimeSpan.TryParse(RAWItems[5], out Timeout))
                     {
-                        Items.Add(new ConfigItem(Adaptername, SpeedTriggerFrom, SpeedTriggerTo, WebSiteName, MaxBytesPerSec, MaxConn, Timeout, IISServiceName));
+                        Items.Add(new ConfigItem(Adaptername, SpeedTriggerFrom, SpeedTriggerTo, WebSiteName, MaxBytesPerSec, MaxConn, Timeout));
                     }
                 }
             }
@@ -187,7 +207,7 @@ namespace IIS_Limiter
 
     internal sealed class ConfigItem
     {
-        internal ConfigItem(string Adaptername, int SpeedTriggerFrom, int SpeedTriggerTo, string WebSiteName, int MaxBytesPerSec, int MaxConn, TimeSpan Timeout, string IISServiceName)
+        internal ConfigItem(string Adaptername, int SpeedTriggerFrom, int SpeedTriggerTo, string WebSiteName, int MaxBytesPerSec, int MaxConn, TimeSpan Timeout)
         {
             this.Adaptername = Adaptername;
             this.SpeedTriggerFrom = SpeedTriggerFrom;
@@ -196,7 +216,6 @@ namespace IIS_Limiter
             this.MaxBytesPerSec = MaxBytesPerSec;
             this.MaxConn = MaxConn;
             this.Timeout = Timeout;
-            this.IISServiceName = IISServiceName;
             this.LastAdapterSpeed = 0;
         }
 
@@ -207,7 +226,6 @@ namespace IIS_Limiter
         internal int MaxBytesPerSec { get; set; }
         internal int MaxConn { get; set; }
         internal TimeSpan Timeout { get; set; }
-        internal string IISServiceName { get; set; }
         internal int LastAdapterSpeed { get; set; }
     }
 }

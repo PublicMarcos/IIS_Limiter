@@ -12,9 +12,9 @@
 (Optional)Hier muss man angeben in welchen Intervall das Tool die Bandbreite überprüfen soll. 1 Stunde (01:00:00) ist standard.
 
 ##Configeinträge (Beispiel)
-Ethernet 3,1-100,Default Web Site,52428800,150000,00:02:00,W3SVC
+Ethernet 3,1-100,Default Web Site,52428800,150000,00:02:00
 
-Ethernet 3,101-1000,Default Web Site,943718400,150000,00:01:00,W3SVC
+Ethernet 3,101-1000,Default Web Site,943718400,150000,00:01:00
 
 
 1. Adaptername = Ethernet 3
@@ -23,7 +23,6 @@ Ethernet 3,101-1000,Default Web Site,943718400,150000,00:01:00,W3SVC
 4. Limitierung der Bandbreite in Bytes/s = 52428800
 5. Limitierung der MaxConnections = 150000
 6. Änderung des Timeouts = 00:02:00
-7. IIS Dienstname = W3SVC
 
 Im oben angegebenen Beispiel wird die Webseite "Default Web Site" auf 50Mbit/s breschränkt, wenn der Adapter "Ethernet 3" auf 100Mbit/s oder weniger fällt. Geht die Bandbreite des Adapters auf 1Gbit/s zurück, dann kriegt die Webseite wieder 900Mbit/s.
 

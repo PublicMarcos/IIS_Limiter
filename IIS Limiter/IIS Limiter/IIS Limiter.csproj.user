@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <StartArguments>-config="C:\Users\Administrator\Documents\Visual Studio 2015\Projects\IIS Limiter\IIS Limiter\bin\Debug\test 1.conf" -log="C:\Users\Administrator\Documents\Visual Studio 2015\Projects\IIS Limiter\IIS Limiter\bin\Debug\test 1.log" -checkinterval=01:00:00</StartArguments>
+    <StartArguments>-config="C:\Users\Administrator\Documents\Visual Studio 2015\Projects_work\IIS Limiter\IIS Limiter\bin\Debug\test 1.conf" -log="C:\Users\Administrator\Documents\Visual Studio 2015\Projects_work\IIS Limiter\IIS Limiter\bin\Debug\test 1.log" -checkinterval=01:00:00</StartArguments>
   </PropertyGroup>
 </Project>
