@@ -3,15 +3,15 @@
   <img src="Screenshot.png">
 </p>
 
-##Startparameter
-###-config="Path"
+## Startparameter
+### -config="Path"
 (Plicht)Hier muss der Pfad zur Configdatei angegeben werden.
-###-log="Path"
+### -log="Path"
 (Plicht)Hier muss der Pfad zur zukünftigen Log Datei angegeben werden.
-###-checkinterval=00:00:00
+### -checkinterval=00:00:00
 (Optional)Hier muss man angeben in welchen Intervall das Tool die Bandbreite überprüfen soll. 1 Stunde (01:00:00) ist standard.
 
-##Configeinträge (Beispiel)
+## Configeinträge (Beispiel)
 Ethernet 3,1-100,Default Web Site,52428800,150000,00:02:00
 
 Ethernet 3,101-1000,Default Web Site,943718400,150000,00:01:00
@@ -26,10 +26,10 @@ Ethernet 3,101-1000,Default Web Site,943718400,150000,00:01:00
 
 Im oben angegebenen Beispiel wird die Webseite "Default Web Site" auf 50Mbit/s breschränkt, wenn der Adapter "Ethernet 3" auf 100Mbit/s oder weniger fällt. Geht die Bandbreite des Adapters auf 1Gbit/s zurück, dann kriegt die Webseite wieder 900Mbit/s.
 
-##Inhalt
+## Inhalt
 Hier finden Sie den Sourcecode für das Programm.
 
-##Zweck
+## Zweck
 Kennen Sie das, wenn Ihr IIS Webserver zu viel Traffic verursacht, weil das, was Sie anbieten, so beliebt ist, und der Server-Provider Ihre Leitung von 1Gb/s auf 100Mb/s oder weniger limitiert?
 
 Das wäre ja kein Problem, wenn der Webserverdienst nicht auch die letzten Bits für sich beanspruchen würde, sodass man nicht einmal mehr vernünftig mit Remote Desktop auf diesen Server arbeiten kann. In solchen Fällen ist es dann notwendig, dass man manuel in den IIS Einstellung mit großer Mühe (da der Remote Desktop extrem hängt) die Bandbreite für die IIS Webseite heruntersetzt.
