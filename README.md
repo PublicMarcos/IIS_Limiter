@@ -30,10 +30,10 @@ Im oben angegebenen Beispiel wird die Webseite "Default Web Site" auf 50Mbit/s b
 Hier finden Sie den Sourcecode für das Programm.
 
 ## Zweck
-Kennen Sie das, wenn Ihr IIS Webserver zu viel Traffic verursacht, weil das, was Sie anbieten, so beliebt ist, und der Server-Provider Ihre Leitung von 1Gb/s auf 100Mb/s oder weniger limitiert?
+Kennen Sie das? Wenn Ihr IIS Webserver zu viel Traffic verursacht, weil das, was Sie anbieten, so beliebt ist und der Server-Provider Ihre Leitung deshalb von 1Gb/s auf 100Mb/s oder weniger limitiert?
 
 Das wäre ja kein Problem, wenn der Webserverdienst nicht auch die letzten Bits für sich beanspruchen würde, sodass man nicht einmal mehr vernünftig mit Remote Desktop auf diesen Server arbeiten kann. In solchen Fällen ist es dann notwendig, dass man manuel in den IIS Einstellung mit großer Mühe (da der Remote Desktop extrem hängt) die Bandbreite für die IIS Webseite heruntersetzt.
 
 Da die Beschränkung aufseiten des Server-Provider's aber auch Montags um 3 Uhr morgens automatisch eintreten kann, kriegt man es oft nicht mit, wann es passiert.
 
-Und genau dafür ist dieses Programm. Es überprüft die dem angegebenen Netzwerkadapter zur Verfügung stehende Bandbreite in einem festgelegten Intervall und Beschränkt automatisch bei einer Veränderung die Bandbreite der einzelnen Webseiten nach festgelegten Mustern. So muss man sich nie weider Sorgen machen, dass man nicht mehr per Remote Desktop auf dem Server kommt, weil der IIS auch die letzten Bytes für sich beansprucht. Doch nicht nur für Remote Desktop kann es verheerend sein, auch andere Dienste könnten benötigt werden.
+Und genau dafür ist dieses Programm. Es überprüft die dem angegebenen Netzwerkadapter zur Verfügung stehende Bandbreite in einem festgelegten Intervall und Beschränkt automatisch bei einer Veränderung die Bandbreite der einzelnen Webseiten nach festgelegten Mustern. So muss man sich nie weider Sorgen machen, dass man nicht mehr per Remote Desktop auf dem Server kommt, weil der IIS auch die letzten Bits für sich beansprucht. Doch nicht nur für Remote Desktop kann es verheerend sein, auch andere Dienste könnten von nöten sein.
